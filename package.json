@@ -1,4 +1,7 @@
 {
+        }
+
+        return `Incorrect password. Attempt ${attemptCount} of ${maxAttempts}.`;
   "name": "js-nested-arrow-functions-lab",
   "version": "1.0.0",
   "main": "index.js",
