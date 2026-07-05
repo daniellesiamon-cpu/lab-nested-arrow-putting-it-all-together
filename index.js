@@ -1,42 +1,30 @@
-// Outer function
-const createLoginSystem = (correctPassword, maxAttempts) => {
+const createLoginTracker = (userInfo) => {
+  const MAX_ATTEMPTS = 3;
+  let attemptCount = 0;
 
-    // Variables stored in the outer function
-    let attemptsRemaining = maxAttempts;
-    let accountLocked = false;
+  // This inner function forms a "closure", remembering attemptCount across calls
+  return (passwordAttempt) => {
+    attemptCount++;
 
-    // Inner arrow function (Closure)
-    return (enteredPassword) => {
+    // 1. If they've already failed 3 times, lock them out immediately on the 4th try
+    if (attemptCount > MAX_ATTEMPTS) {
+      return "Account locked due to too many failed login attempts";
+    }
 
-        if (accountLocked) {
-            return "Account is locked. Contact customer support.";
-        }
+    // 2. If the password matches, grant access
+    if (passwordAttempt === userInfo.password) {
+      return "Login successful";
+    }
 
-        if (enteredPassword === correctPassword) {
-            attemptsRemaining = maxAttempts;
-            return "Login Successful!";
-        }
+    // 3. If it's exactly the 3rd failed attempt, lock the account
+    if (attemptCount === MAX_ATTEMPTS) {
+      return "Account locked due to too many failed login attempts";
+    }
 
-        attemptsRemaining--;
-
-        if (attemptsRemaining === 0) {
-            accountLocked = true;
-            return "Incorrect password. Account has been locked.";
-        }
-
-        return `Incorrect password. Attempts remaining: ${attemptsRemaining}`;
-    };
+    // 4. For attempts 1 and 2, show the failure count
+    return `Attempt ${attemptCount}: Login failed`;
+  };
 };
 
-// Create login object
-const login = createLoginSystem("Shop123", 3);
-
-// Testing
-console.log(login("hello"));
-console.log(login("password"));
-console.log(login("Shop123"));
-console.log(login("wrong"));
-console.log(login("wrong"));
-console.log(login("wrong"));
-console.log(login("Shop123"));
-};
+// Make sure the function is exported so Jest can test it
+module.exports = { createLoginTracker };
